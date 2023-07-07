@@ -16,4 +16,4 @@ def sam_init():
         "box_threshold": 0.3
     }
     
-    return api.post_and_get_api_result("http://175.178.168.6:8081/sam/dino-predict", params, True)
+    return api.post_and_get_api_result("http://175.178.168.6:8081/sam/dino-predict", params, False)

@@ -350,7 +350,7 @@ class WebUIApi:
 
             return asyncio.ensure_future(self.async_post(url=url, json=json))
         else:
-            response = self.session.post(url=url, json=json)
+            response = self.session.post(url=url, json=json, timeout=20000)
             return self._to_api_result(response)
 
     async def async_post(self, url, json):
