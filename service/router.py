@@ -17,3 +17,15 @@ def sam_init():
     }
     
     return api.post_and_get_api_result("http://175.178.168.6:8081/sam/dino-predict", params, False)
+
+def inpaint():
+    # 暂时声明
+    mask = image
+    inpaintPrompt = "cute cat"
+    inpainting_result = api.img2img(images=[image],
+                                mask_image=mask,
+                                inpainting_fill=1,
+                                prompt=inpaintPrompt,
+                                seed=104,
+                                cfg_scale=5.0,
+                                denoising_strength=0.7)
