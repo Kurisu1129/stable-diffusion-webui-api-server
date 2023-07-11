@@ -9,4 +9,4 @@ def sam_dino_predict():
 
 @app.route('/inpaint')
 def inpaint():
-    return router.
+    return router.inpaint()

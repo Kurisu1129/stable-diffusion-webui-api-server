@@ -6,6 +6,7 @@ from PIL import Image, PngImagePlugin
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Dict, Any
+import Utils
 
 
 class Upscaler(str, Enum):
@@ -47,6 +48,12 @@ class WebUIApiResult:
     @property
     def image(self):
         return self.images[0]
+    @property
+    def imageList(self):
+        return self.images
+    @property
+    def getImage(self, index):
+        return self.images[index]
 
 
 class ControlNetUnit:
@@ -199,6 +206,18 @@ class WebUIApi:
 
         return WebUIApiResult(images, parameters, info)
 
+    def _to_map_result(self, response):
+        if response.status_code != 200:
+            raise RuntimeError(response.status_code, response.text)
+
+        r = response.json()
+        Utils.saveToTxt("./txt/response.txt", str(r))
+        result = {}
+        image = Image.open(io.BytesIO(base64.b64decode(r["image_with_box"])))
+        result["image"] = image
+        result["msg"] = r["msg"]
+        return result
+
     async def _to_api_result_async(self, response):
         if response.status != 200:
             raise RuntimeError(response.status, await response.text())
@@ -347,10 +366,10 @@ class WebUIApi:
     def post_and_get_api_result(self, url, json, use_async):
         if use_async:
             import asyncio
-
+            asyncio.set_event_loop(asyncio.new_event_loop())
             return asyncio.ensure_future(self.async_post(url=url, json=json))
         else:
-            response = self.session.post(url=url, json=json, timeout=20000)
+            response = self.session.post(url=url, json=json, timeout=65535)
             return self._to_api_result(response)
 
     async def async_post(self, url, json):
@@ -471,7 +490,7 @@ class WebUIApi:
         if use_deprecated_controlnet and controlnet_units and len(controlnet_units) > 0:
             payload["controlnet_units"] = [x.to_dict() for x in controlnet_units]
             return self.custom_post(
-                "controlnet/img2img", payload=payload, use_async=use_async
+                "controlnet/img2img", payload=payload, use_async=False
             )
 
         if controlnet_units and len(controlnet_units) > 0:
@@ -482,7 +501,7 @@ class WebUIApi:
             payload["alwayson_scripts"]["ControlNet"] = {"args": []}
 
         return self.post_and_get_api_result(
-            f"{self.baseurl}/img2img", payload, use_async
+            f"{self.baseurl}/img2img", payload, False
         )
 
     def extra_single_image(
