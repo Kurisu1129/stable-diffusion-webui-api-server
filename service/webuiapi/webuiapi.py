@@ -7,7 +7,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Dict, Any
 import Utils
+import os
 
+os.environ['CURL_CA_BUNDLE'] = ''
 
 class Upscaler(str, Enum):
     none = "None"
@@ -206,7 +208,7 @@ class WebUIApi:
 
         return WebUIApiResult(images, parameters, info)
 
-    def _to_map_result(self, response):
+    def dino_to_map_result(self, response):
         if response.status_code != 200:
             raise RuntimeError(response.status_code, response.text)
 
@@ -214,6 +216,18 @@ class WebUIApi:
         Utils.saveToTxt("./txt/response.txt", str(r))
         result = {}
         image = Image.open(io.BytesIO(base64.b64decode(r["image_with_box"])))
+        result["image"] = image
+        result["msg"] = r["msg"]
+        return result
+
+    def sam_to_map_result(self, response):
+        if response.status_code != 200:
+            raise RuntimeError(response.status_code, response.text)
+
+        r = response.json()
+        Utils.saveToTxt("./txt/response.txt", str(r))
+        result = {}
+        image = Image.open(io.BytesIO(base64.b64decode(r["masks"][2])))
         result["image"] = image
         result["msg"] = r["msg"]
         return result
@@ -391,7 +405,7 @@ class WebUIApi:
         inpainting_fill=0,
         inpaint_full_res=True,
         inpaint_full_res_padding=0,
-        inpainting_mask_invert=0,
+        inpainting_mask_invert=1,
         initial_noise_multiplier=1,
         prompt="",
         styles=[],
