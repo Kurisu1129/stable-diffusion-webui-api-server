@@ -1,26 +1,29 @@
 <!-- eslint-disable indent -->
 <template>
   <div class="dashboard-container">
-    <div>
+    <div class="vertical-align">
       <el-upload
         action="https://jsonplaceholder.typicode.com/posts/"
         class="avatar-uploader"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
+        :before-upload="beforeAvatarUpload"
+        :on-change="handleChange"
         list-type="picture"
         :limit="1"
+        :file-list="fileList"
       >
         <img v-if="imageUrl" :src="imageUrl" class="avatar"/>
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </div>
-    <div>
+    <div class="vertical-align">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="主体词" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.pass" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="生成prompt" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.checkPass" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">生成</el-button>
@@ -29,15 +32,25 @@
       </el-form>
     </div>
 
-    <div class="infinite-list" v-infinite-scroll="loadImage" style="overflow:auto;height: 900px">
-      <div id="image_block"
-           v-for="each_image of image_list"
-           :key=each_image.id
-      >
-        <img :src="each_image.url" alt="no" width="300px" height="160px">
-      </div>
-    </div>
+<div class="dashboard-container">
+    <el-row>
+      <el-col :span="24">
+        <div class="vertical-align">
+          <label class="image-label">Product Image</label>
+          <img class="image" :src="productImageUrl" alt="Product Image">
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <div class="vertical-align">
+          <label class="image-label">Generated Image</label>
+          <img class="image" :src="generatedImageUrl" alt="Generated Image">
+        </div>
+      </el-col>
+    </el-row>
   </div>
+</div>
 </template>
 
 <script>
@@ -69,7 +82,9 @@ export default {
         {id:2,url:"https://img1.baidu.com/it/u=1919509102,1927615551&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"}],
       cur_index: 0,
       page_size: 25,//每页25个
-      fileList: []
+      fileList: [],
+      productUrl: "",
+      generatedImageUrl: ""
     }
   },
   computed: {
@@ -94,6 +109,31 @@ export default {
       formdata.append("file_class", "0")
       // axios.post("/api/search_image", formdata).then(this.handleUploadSucc)
     },
+    beforeAvatarUpload(file) {
+    const isJPG = file.type === 'image/jpeg';
+    const isPNG = file.type === 'image/png';
+    const isLt2M = file.size / 1024 / 1024 < 2;
+
+    if (!isJPG && !isPNG) {
+      this.$message.error('Only JPG/PNG files are allowed.');
+    }
+    if (!isLt2M) {
+      this.$message.error('Image must be smaller than 2MB.');
+    }
+
+    return (isJPG || isPNG) && isLt2M;
+  },
+
+  handleChange(file, fileList) {
+    if (file.raw) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file.raw);
+    }
+    this.fileList = fileList;
+  },
   }
 }
 </script>
@@ -135,6 +175,7 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+  object-fit: cover;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -148,6 +189,27 @@ export default {
 }
 #image_block:hover {
   background-color: #eaeaea;
+}
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vertical-align {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.image-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.image {
+  width: 300px;
+  height: 160px;
 }
 </style>
 
