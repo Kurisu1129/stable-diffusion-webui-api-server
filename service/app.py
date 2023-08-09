@@ -6,13 +6,14 @@ app = Flask(__name__)
 
 @app.route('/sam/sam-predict')
 def sam_dino_predict():
-    threshold = request.args.to_dict().get('threshold')
+    # threshold = request.args.to_dict().get('threshold')
+    threshold = request.form.get('threshold')
     return router.sam_init_with_dino(threshold)
 
-@app.route('/inpaint')
+@app.route('/inpaint', methods=['POST'])
 def inpaint():
-    threshold = request.args.to_dict().get('threshold')
-    prompt = request.args.to_dict().get('prompt')
+    threshold = request.form.get('threshold')
+    prompt = request.form.get('prompt')
     return router.inpaint(threshold, prompt)
 
 @app.route('/upload', methods=['POST'])
