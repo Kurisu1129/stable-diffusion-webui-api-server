@@ -14,3 +14,9 @@ def inpaint():
     threshold = request.args.to_dict().get('threshold')
     prompt = request.args.to_dict().get('prompt')
     return router.inpaint(threshold, prompt)
+
+@app.route('/upload', methods=['POST'])
+def save_file():
+    file = request.files['file']
+    file.save('./image/upload/' + file.filename)
+    return 'File saved successfully.'

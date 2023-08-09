@@ -3,7 +3,7 @@
   <div class="dashboard-container">
     <div class="vertical-align">
       <el-upload
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="127.0.0.1:5000/upload/"
         class="avatar-uploader"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
@@ -20,10 +20,10 @@
     <div class="vertical-align">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="主体词" prop="pass">
-          <el-input v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.object" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="生成prompt" prop="checkPass">
-          <el-input v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.prompt" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">生成</el-button>
@@ -63,9 +63,8 @@ export default {
       url: '"https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       imageUrl: '',
       ruleForm: {
-        pass: '',
-        checkPass: '',
-        age: ''
+        object: '',
+        prompt: ''
       },
       rules: {
         pass: [
