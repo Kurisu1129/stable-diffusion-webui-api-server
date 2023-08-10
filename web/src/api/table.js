@@ -7,3 +7,10 @@ export function getList(params) {
     params
   })
 }
+export function upload(data) {
+  return request({
+    url: '/vue-admin-template/upload',
+    method: 'post',
+    data
+  })
+}

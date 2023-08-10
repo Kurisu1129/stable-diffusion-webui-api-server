@@ -1,9 +1,10 @@
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 import router
 
 app = Flask(__name__)
-
+CORS(app)
 @app.route('/sam/sam-predict')
 def sam_dino_predict():
     # threshold = request.args.to_dict().get('threshold')
@@ -19,5 +20,6 @@ def inpaint():
 @app.route('/upload', methods=['POST'])
 def save_file():
     file = request.files['file']
+    print(request.files.to_dict)
     file.save('./image/upload/' + file.filename)
     return 'File saved successfully.'
