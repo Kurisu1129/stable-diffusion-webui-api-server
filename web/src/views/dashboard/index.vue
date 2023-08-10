@@ -3,7 +3,7 @@
   <div class="dashboard-container">
     <div class="vertical-align">
       <el-upload
-        action="127.0.0.1:5000/upload/"
+        action
         class="avatar-uploader"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
@@ -55,7 +55,9 @@
 
 <script>
 import {mapGetters} from 'vuex'
-
+import axios from 'axios'
+axios.defaults.baseURL = 'http://127.0.0.1:5000';
+axios.defaults.timeout = 5000;
 export default {
   name: 'Dashboard',
   data() {
@@ -94,12 +96,24 @@ export default {
     formdata.append('start', 0)
     formdata.append("limit", this.page_size)
     formdata.append("file_class", "0")
-    // axios.post("/api/search_image", formdata).then(this.handleUploadSucc);
+    // axios.post("/inpaint", formdata).then(this.handleUploadSucc);
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = file.url
-    },
+    handleAvatarSuccess(response, file) {
+  this.imageUrl = file.url;
+  const formdata = new FormData();
+  formdata.append('file', file);
+
+  axios.post('/upload', formdata)
+    .then(uploadResponse => {
+      // Handle the upload response
+      console.log(uploadResponse.data);
+    })
+    .catch(uploadError => {
+      // Handle the upload error
+      console.error(uploadError);
+    });
+},
     loadImage() {
       this.cur_index += this.page_size
       var formdata = new FormData()
