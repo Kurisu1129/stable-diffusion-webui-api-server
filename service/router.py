@@ -1,7 +1,7 @@
 from PIL import Image
 import webuiapi
 
-image = Image.open("./image/8d6729ca-5ba3-40b9-9afe-01da5c67100c.jpg")
+image = Image.open("./image/upload/00027-3992057090.png")
 api = webuiapi.WebUIApi(host='175.178.168.6', port=8081)
 
 def hello_world():

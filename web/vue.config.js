@@ -79,6 +79,11 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
+    config.module
+      .rule('image')
+      .test(/\.png$/)
+      .exclude.add(resolve('../service/image'))
+      .end()
 
     config
       .when(process.env.NODE_ENV !== 'development',

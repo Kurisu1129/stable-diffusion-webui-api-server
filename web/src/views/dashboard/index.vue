@@ -50,7 +50,7 @@
         <el-col :span="24">
           <div class="vertical-align">
             <label class="image-label">Generated Image</label>
-            <el-image class="image" v-bind:src="require(generatedImageUrl)" :key="imgKey" alt="Generated Image" />
+            <img class="image" :src="output" alt="Generated Image" />
           </div>
         </el-col>
       </el-row>
@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import axios from 'axios';
+import output from '../../../../service/image/output/output.png'
 export default {
   name: 'Dashboard',
   data() {
@@ -72,17 +72,18 @@ export default {
         object: '',
         prompt: '',
       },
+      output,
       rules: {
         object: [{ required: true, message: 'Subject is required', trigger: 'blur' }],
         prompt: [{ required: true, message: 'Generated Prompt is required', trigger: 'blur' }],
       },
       fileList: [],
       productUrl: '',
-      generatedImageUrl: '../../../../service/image/white.png',
+      generatedImageUrl: '../../assets/white.png',
     };
   },
-  computed: {
-    ...mapGetters(['name']),
+  mounted() {
+    console.log("mount")
   },
   methods: {
     handleAvatarSuccess(response, file) {
@@ -109,9 +110,8 @@ export default {
       formData.append('prompt', this.ruleForm.prompt)
       axios.post('http://127.0.0.1:5000/inpaint', formData)
         .then(response => {
-          console.log('Image uploaded successfully:', response);
+          console.log('Image inpaint successfully:', response);
           this.generatedImageUrl = '../../../../service/image/output/output.png'
-          this.imgKey = Date.now()
           // Handle the response as needed
         })
         .catch(error => {
