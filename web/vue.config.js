@@ -31,10 +31,13 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: false,
+    open: true,
     overlay: {
       warnings: false,
       errors: true
+    },
+    watchOptions: {
+      ignored: [/node_modules/, /image/],
     },
     before: require('./mock/mock-server.js')
   },

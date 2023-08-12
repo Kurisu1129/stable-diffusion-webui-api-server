@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 import router
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -21,5 +22,5 @@ def inpaint():
 def save_file():
     file = request.files['file']
     print(request.files.to_dict)
-    file.save('./image/upload/' + file.filename)
+    file.save('../web/src/assets/image/upload/upload.png')
     return 'File saved successfully.'

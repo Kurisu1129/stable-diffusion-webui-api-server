@@ -18,14 +18,12 @@
     </div>
     <div class="vertical-align">
       <el-form
-        :model="ruleForm"
-        :rules="rules"
         ref="ruleForm"
         label-width="100px"
         class="demo-ruleForm"
       >
         <el-form-item label="主体词" prop="object">
-          <el-input v-model="ruleForm.object" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.objectword" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="prompt" prop="prompt">
           <el-input v-model="ruleForm.prompt" autocomplete="off"></el-input>
@@ -50,7 +48,7 @@
         <el-col :span="24">
           <div class="vertical-align">
             <label class="image-label">Generated Image</label>
-            <img class="image" :src="output" alt="Generated Image" />
+            <img class="image" :src="'@/assets/image/output/' + generatedImageUrl + '.png'" alt="Generated Image" />
           </div>
         </el-col>
       </el-row>
@@ -60,7 +58,6 @@
 
 <script>
 import axios from 'axios';
-import output from '../../../../service/image/output/output.png'
 export default {
   name: 'Dashboard',
   data() {
@@ -69,21 +66,23 @@ export default {
       imgKey: "",
       imagefile: null,
       ruleForm: {
-        object: '',
+        objectword: '',
         prompt: '',
       },
-      output,
       rules: {
         object: [{ required: true, message: 'Subject is required', trigger: 'blur' }],
         prompt: [{ required: true, message: 'Generated Prompt is required', trigger: 'blur' }],
       },
       fileList: [],
       productUrl: '',
-      generatedImageUrl: '../../assets/white.png',
+      generatedImageUrl: "white",
     };
   },
   mounted() {
     console.log("mount")
+  },
+  computed: {
+
   },
   methods: {
     handleAvatarSuccess(response, file) {
@@ -108,10 +107,14 @@ export default {
       var formData = new FormData()
       formData.append('threshold', 0.3)
       formData.append('prompt', this.ruleForm.prompt)
+      var that = this
       axios.post('http://127.0.0.1:5000/inpaint', formData)
         .then(response => {
           console.log('Image inpaint successfully:', response);
-          this.generatedImageUrl = '../../../../service/image/output/output.png'
+          setTimeout(() => {
+            console.log('end sleep');
+            that.generatedImageUrl =  response.data
+          }, 5000);
           // Handle the response as needed
         })
         .catch(error => {
