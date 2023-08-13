@@ -400,7 +400,7 @@ class WebUIApi:
         self,
         images=[],  # list of PIL Image
         resize_mode=0,
-        denoising_strength=0.75,
+        denoising_strength=0.95,
         image_cfg_scale=1.5,
         mask_image=None,  # PIL Image mask
         mask_blur=4,

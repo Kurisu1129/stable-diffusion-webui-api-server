@@ -50,11 +50,12 @@ def inpaint(dinoThreshold, prompt, dinoprompt):
     objectImage = Image.open("./image/sam_dino_object.png")
     inpainting_result = api.img2img(images=[image],
                                 mask_image=mask,
-                                inpainting_fill=1,
+                                inpainting_fill=0,
                                 prompt=prompt,
-                                seed=104,
+                                seed=int(time.time()),
                                 cfg_scale=5.0,
                                 denoising_strength=0.7,
+                                inpaint_full_res_padding = 32,
                                 use_async=False)
     trace = str(int(time.time()))
     inpainting_result.image.save('./image/output/' + trace + '.png')
