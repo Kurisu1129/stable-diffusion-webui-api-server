@@ -228,7 +228,9 @@ class WebUIApi:
         Utils.saveToTxt("./txt/response.txt", str(r))
         result = {}
         image = Image.open(io.BytesIO(base64.b64decode(r["masks"][2])))
+        objectimage = Image.open(io.BytesIO(base64.b64decode(r["masked_images"][2])))
         result["image"] = image
+        result['object'] = objectimage
         result["msg"] = r["msg"]
         return result
 

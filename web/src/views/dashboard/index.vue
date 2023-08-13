@@ -29,8 +29,8 @@
           <el-input v-model="ruleForm.prompt" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="inpaint()">生成</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button type="primary" @click="inpaint()" v-loading.fullscreen.lock="fullscreenLoading">生成</el-button>
+          <el-button @click="resetForm()">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -39,7 +39,7 @@
       <el-row>
         <el-col :span="24">
           <div class="vertical-align">
-            <label class="image-label">Product Image</label>
+            <label class="image-label">商品主体</label>
             <img class="image" :src="productUrl" alt="Product Image" />
           </div>
         </el-col>
@@ -47,8 +47,8 @@
       <el-row>
         <el-col :span="24">
           <div class="vertical-align">
-            <label class="image-label">Generated Image</label>
-            <img class="image" :src="'@/assets/image/output/' + generatedImageUrl + '.png'" alt="Generated Image" />
+            <label class="image-label">生成结果</label>
+            <img class="image" :src=generatedImageUrl alt="Generated Image" />
           </div>
         </el-col>
       </el-row>
@@ -73,9 +73,10 @@ export default {
         object: [{ required: true, message: 'Subject is required', trigger: 'blur' }],
         prompt: [{ required: true, message: 'Generated Prompt is required', trigger: 'blur' }],
       },
+      fullscreenLoading: false, 
       fileList: [],
-      productUrl: '',
-      generatedImageUrl: "white",
+      productUrl: "http://127.0.0.1:5000/image/white.png",
+      generatedImageUrl: "http://127.0.0.1:5000/image/white.png",
     };
   },
   mounted() {
@@ -107,20 +108,31 @@ export default {
       var formData = new FormData()
       formData.append('threshold', 0.3)
       formData.append('prompt', this.ruleForm.prompt)
+      formData.append('dinoprompt', this.ruleForm.object)
       var that = this
+      this.fullscreenLoading = true
       axios.post('http://127.0.0.1:5000/inpaint', formData)
         .then(response => {
           console.log('Image inpaint successfully:', response);
           setTimeout(() => {
             console.log('end sleep');
-            that.generatedImageUrl =  response.data
-          }, 5000);
+            that.generatedImageUrl =  "http://127.0.0.1:5000/image/" + response.data + ".png"
+            that.productUrl = "http://127.0.0.1:5000/image/" + response.data + "_object.png"
+            that.fullscreenLoading = false
+          }, 1000);
           // Handle the response as needed
         })
         .catch(error => {
           console.error('Error uploading image:', error);
+          that.fullscreenLoading = false
           // Handle the error as needed
         });
+    },
+    resetForm() {
+      this.ruleForm = {
+        objectword: '',
+        prompt: '',
+      }
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg';
@@ -214,7 +226,7 @@ export default {
 }
 
 .image {
-  width: 300px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
 }
 </style>

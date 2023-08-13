@@ -20,7 +20,7 @@ def sam_init():
     samResult["image"].save(f'./image/sam.png')
     return 
 
-def sam_init_with_dino(threshold):
+def sam_init_with_dino(threshold, dinoprompt):
     image = Image.open("../web/src/assets/image/upload/upload.png")
     b64Img = webuiapi.b64_img(image)
     params = {
@@ -30,7 +30,7 @@ def sam_init_with_dino(threshold):
         "sam_negative_points": [],
         "dino_enabled": True,
         "dino_model_name": "GroundingDINO_SwinT_OGC (694MB)",
-        "dino_text_prompt": "a bottle",
+        "dino_text_prompt": dinoprompt,
         "dino_box_threshold": threshold,
         "dino_preview_checkbox": False,
         "dino_preview_boxes_selection": [
@@ -38,14 +38,16 @@ def sam_init_with_dino(threshold):
         ]
     }
     samResult = api.sam_to_map_result(api.session.post(url="http://175.178.168.6:8081/sam/sam-predict", json=params, timeout=65535))
-    samResult["image"].save(f'../web/src/assets/image/sam_dino.png')
+    samResult["image"].save(f'./image/sam_dino.png')
+    samResult["object"].save(f'./image/sam_dino_object.png')
     return 
 
-def inpaint(dinoThreshold, prompt):
+def inpaint(dinoThreshold, prompt, dinoprompt):
     # sam图像分割
-    sam_init_with_dino(dinoThreshold)
+    sam_init_with_dino(dinoThreshold, dinoprompt)
     # 重绘
-    mask = Image.open("../web/src/assets/image/sam_dino.png")
+    mask = Image.open("./image/sam_dino.png")
+    objectImage = Image.open("./image/sam_dino_object.png")
     inpainting_result = api.img2img(images=[image],
                                 mask_image=mask,
                                 inpainting_fill=1,
@@ -55,5 +57,6 @@ def inpaint(dinoThreshold, prompt):
                                 denoising_strength=0.7,
                                 use_async=False)
     trace = str(int(time.time()))
-    inpainting_result.image.save('../web/src/assets/image/output/' + trace + '.png')
+    inpainting_result.image.save('./image/output/' + trace + '.png')
+    objectImage.save('./image/output/' + trace + '_object.png')
     return trace
