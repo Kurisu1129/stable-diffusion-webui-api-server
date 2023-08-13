@@ -36,16 +36,14 @@
     </div>
 
     <div class="dashboard-container">
-      <el-row>
-        <el-col :span="24">
+      <el-row :gutter="100">
+        <el-col :span="12">
           <div class="vertical-align">
             <label class="image-label">商品主体</label>
             <img class="image" :src="productUrl" alt="Product Image" />
           </div>
         </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
+        <el-col :span="12">
           <div class="vertical-align">
             <label class="image-label">生成结果</label>
             <img class="image" :src=generatedImageUrl alt="Generated Image" />
