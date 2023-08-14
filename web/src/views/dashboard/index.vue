@@ -71,10 +71,10 @@ export default {
         object: [{ required: true, message: 'Subject is required', trigger: 'blur' }],
         prompt: [{ required: true, message: 'Generated Prompt is required', trigger: 'blur' }],
       },
-      fullscreenLoading: false, 
+      fullscreenLoading: false,
       fileList: [],
-      productUrl: "http://127.0.0.1:5000/image/white.png",
-      generatedImageUrl: "http://127.0.0.1:5000/image/white.png",
+      productUrl: "http://10.81.196.25:5000/image/white.png",
+      generatedImageUrl: "http://10.81.196.25:5000/image/white.png",
     };
   },
   mounted() {
@@ -92,7 +92,7 @@ export default {
       const formData = new FormData();
       formData.append('file', file.raw);
 
-      axios.post('http://127.0.0.1:5000/upload', formData)
+      axios.post('http://10.81.196.25:5000/upload', formData)
         .then(response => {
           console.log('Image uploaded successfully:', response);
           // Handle the response as needed
@@ -109,13 +109,13 @@ export default {
       formData.append('dinoprompt', this.ruleForm.object)
       var that = this
       this.fullscreenLoading = true
-      axios.post('http://127.0.0.1:5000/inpaint', formData)
+      axios.post('http://10.81.196.25:5000/inpaint', formData)
         .then(response => {
           console.log('Image inpaint successfully:', response);
           setTimeout(() => {
             console.log('end sleep');
-            that.generatedImageUrl =  "http://127.0.0.1:5000/image/" + response.data + ".png"
-            that.productUrl = "http://127.0.0.1:5000/image/" + response.data + "_object.png"
+            that.generatedImageUrl =  "http://10.81.196.25:5000/image/" + response.data + ".png"
+            that.productUrl = "http://10.81.196.25:5000/image/" + response.data + "_object.png"
             that.fullscreenLoading = false
           }, 1000);
           // Handle the response as needed

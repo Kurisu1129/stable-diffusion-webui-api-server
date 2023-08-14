@@ -43,6 +43,7 @@ def sam_init_with_dino(threshold, dinoprompt):
     return 
 
 def inpaint(dinoThreshold, prompt, dinoprompt):
+    image = Image.open("../web/src/assets/image/upload/upload.png")
     # sam图像分割
     sam_init_with_dino(dinoThreshold, dinoprompt)
     # 重绘
